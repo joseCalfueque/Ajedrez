@@ -1,4 +1,5 @@
 package ajedrez.modelo;
+import java.awt.*;
 
 public class Peon extends Pieza {
 
@@ -14,13 +15,13 @@ public class Peon extends Pieza {
         int nuevaFila = nuevaPosicion.fila();
         int nuevaColumna = nuevaPosicion.columna();
 
-        // Movimiento simple hacia adelante
+        // para mover hacia adelante
         if (columnaActual == nuevaColumna && nuevaFila == filaActual + direccion &&
                 tablero.estaVacio(nuevaPosicion)) {
             return true;
         }
 
-        // Primer movimiento doble
+        // Primer movimiento "doble"
         if (columnaActual == nuevaColumna &&
                 nuevaFila == filaActual + 2 * direccion &&
                 ((this.getColor() == Color.BLANCO && filaActual == 6) || (this.getColor() == Color.NEGRO && filaActual == 1)) &&
@@ -29,7 +30,7 @@ public class Peon extends Pieza {
             return true;
         }
 
-        // Captura diagonal
+        // Captura en diagonal
         if (Math.abs(nuevaColumna - columnaActual) == 1 &&
                 nuevaFila == filaActual + direccion &&
                 tablero.hayPiezaOponente(nuevaPosicion, this.getColor())) {
@@ -42,5 +43,10 @@ public class Peon extends Pieza {
     @Override
     public String toString() {
         return this.getColor() == Color.BLANCO ? "♙" : "♟";
+    }
+
+    @Override
+    public boolean esMovimientoValido(int filaDestino, int columnaDestino, Pieza[][] tablero) {
+        return false;
     }
 }
