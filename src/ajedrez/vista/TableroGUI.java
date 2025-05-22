@@ -1,76 +1,70 @@
 package ajedrez.vista;
 
-import ajedrez.modelo.Tablero;
-import ajedrez.modelo.Pieza;
+import ajedrez.modelo.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.Color;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
-public class TableroGUI {
-    private JFrame ventana;
-    private JButton[][] botones;
-    private Tablero tablero;
-    private int origenX = -1, origenY = -1;
+public class TableroGUI extends JPanel {
+    private final Tablero tablero;
+    private Posicion seleccionada;
 
-    public TableroGUI() {
-        tablero = new Tablero();
-        ventana = new JFrame("Ajedrez");
-        ventana.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        ventana.setSize(600, 600);
-        ventana.setLayout(new GridLayout(8, 8));
-        botones = new JButton[8][8];
+    public TableroGUI(Tablero tablero) {
+        this.tablero = tablero;
+        setPreferredSize(new Dimension(640, 640));
+        setBackground(Color.WHITE);
 
-        inicializarBotones();
-        ventana.setVisible(true);
-    }
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                int fila = e.getY() / 80;
+                int columna = e.getX() / 80;
+                Posicion clic = new Posicion(fila, columna);
 
-    private void inicializarBotones() {
-        for (int fila = 0; fila < 8; fila++) {
-            for (int col = 0; col < 8; col++) {
-                JButton boton = new JButton();
-                boton.setFont(new Font("Arial", Font.BOLD, 20));
-                boton.setBackground((fila + col) % 2 == 0 ? Color.WHITE : Color.GRAY);
-                int finalFila = fila;
-                int finalCol = col;
-
-                boton.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        manejarClick(finalFila, finalCol);
+                if (seleccionada == null) {
+                    Pieza p = tablero.getPieza(clic);
+                    if (p != null) {
+                        seleccionada = clic;
+                        repaint();
                     }
-                });
-
-                botones[fila][col] = boton;
-                ventana.add(boton);
-            }
-        }
-        actualizarTablero();
-    }
-
-    private void manejarClick(int fila, int col) {
-        if (origenX == -1 && tablero.getPieza(fila, col) != null) {
-            origenX = fila;
-            origenY = col;
-        } else {
-            tablero.moverPieza(origenX, origenY, fila, col);
-            origenX = -1;
-            origenY = -1;
-            actualizarTablero();
-        }
-    }
-
-    private void actualizarTablero() {
-        for (int fila = 0; fila < 8; fila++) {
-            for (int col = 0; col < 8; col++) {
-                Pieza pieza = tablero.getPieza(fila, col);
-                if (pieza != null) {
-                    botones[fila][col].setText(pieza instanceof Peon ? "P" : "?");
                 } else {
-                    botones[fila][col].setText("");
+                    tablero.moverPieza(seleccionada, clic);
+                    seleccionada = null;
+                    repaint();
                 }
             }
+        });
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        boolean blanco = true;
+
+        for (int fila = 0; fila < 8; fila++) {
+            for (int col = 0; col < 8; col++) {
+                g.setColor(blanco ? new Color(240, 217, 181) : new Color(181, 136, 99));
+                g.fillRect(col * 80, fila * 80, 80, 80);
+
+                Pieza p = tablero.getPieza(new Posicion(fila, col));
+                if (p != null) {
+                    g.setColor(Color.BLACK);
+                    g.setFont(new Font("SansSerif", Font.BOLD, 40));
+                    g.drawString(p.toString(), col * 80 + 25, fila * 80 + 50);
+                }
+
+                if (seleccionada != null && seleccionada.fila() == fila && seleccionada.columna() == col) {
+                    g.setColor(Color.YELLOW);
+                    g.drawRect(col * 80, fila * 80, 80, 80);
+                    g.drawRect(col * 80 + 1, fila * 80 + 1, 78, 78);
+                }
+
+                blanco = !blanco;
+            }
+            blanco = !blanco;
         }
     }
 }
