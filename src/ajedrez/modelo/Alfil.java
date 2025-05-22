@@ -1,40 +1,35 @@
 package ajedrez.modelo;
 
 public class Alfil extends Pieza {
-
-    public Alfil(Color color) {
-        super(color);
+    public Alfil(Color color, Posicion posicion) {
+        super(color, posicion);
     }
 
     @Override
-    public boolean movimientoValido(int filaInicial, int columnaInicial, int filaFinal, int columnaFinal, Tablero tablero) {
-        int fila = Math.abs(filaFinal - filaInicial);
-        int columna = Math.abs(columnaFinal - columnaInicial);
+    public boolean movimientoValido(Posicion nuevaPosicion, Tablero tablero) {
+        int filaActual = this.getPosicion().fila();
+        int columnaActual = this.getPosicion().columna();
+        int nuevaFila = nuevaPosicion.fila();
+        int nuevaColumna = nuevaPosicion.columna();
 
-        // Movimiento diagonal
-        if (fila != columna) {
+        if (Math.abs(filaActual - nuevaFila) != Math.abs(columnaActual - nuevaColumna))
             return false;
+
+        int pasoFila = Integer.compare(nuevaFila, filaActual);
+        int pasoColumna = Integer.compare(nuevaColumna, columnaActual);
+
+        int f = filaActual + pasoFila, c = columnaActual + pasoColumna;
+        while (f != nuevaFila && c != nuevaColumna) {
+            if (!tablero.estaVacio(new Posicion(f, c))) return false;
+            f += pasoFila;
+            c += pasoColumna;
         }
 
-        int pasoFila = (filaFinal > filaInicial) ? 1 : -1;
-        int pasoColumna = (columnaFinal > columnaInicial) ? 1 : -1;
-
-        int filaActual = filaInicial + pasoFila;
-        int columnaActual = columnaInicial + pasoColumna;
-
-        while (filaActual != filaFinal && columnaActual != columnaFinal) {
-            if (tablero.obtenerPieza(filaActual, columnaActual) != null) {
-                return false; // Camino bloqueado
-            }
-            filaActual += pasoFila;
-            columnaActual += pasoColumna;
-        }
-
-        return true;
+        return tablero.estaVacio(nuevaPosicion) || tablero.hayPiezaOponente(nuevaPosicion, this.getColor());
     }
 
     @Override
     public String toString() {
-        return color == Color.BLANCO ? "♗" : "♝";
+        return getColor() == Color.BLANCO ? "♗" : "♝";
     }
 }
