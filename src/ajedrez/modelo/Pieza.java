@@ -1,32 +1,25 @@
 package ajedrez.modelo;
 
 public abstract class Pieza {
-    protected String color;
-    protected int fila;
-    protected int columna;
+    private Color color;
+    private Posicion posicion;
 
-    public Pieza(String color, int fila, int columna) {
+    public Pieza(Color color, Posicion posicion) {
         this.color = color;
-        this.fila = fila;
-        this.columna = columna;
+        this.posicion = posicion;
     }
 
-    public String getColor() {
+    public Color getColor() {
         return color;
     }
 
-    public int getFila() {
-        return fila;
+    public Posicion getPosicion() {
+        return posicion;
     }
 
-    public int getColumna() {
-        return columna;
+    public void setPosicion(Posicion nueva) {
+        this.posicion = nueva;
     }
 
-    public void setPosicion(int fila, int columna) {
-        this.fila = fila;
-        this.columna = columna;
-    }
-
-    public abstract boolean esMovimientoValido(int filaDestino, int columnaDestino, Pieza[][] tablero);
+    public abstract boolean movimientoValido(Posicion nuevaPosicion, Tablero tablero);
 }

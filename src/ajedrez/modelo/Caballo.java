@@ -1,21 +1,21 @@
 package ajedrez.modelo;
 
 public class Caballo extends Pieza {
-
-    public Caballo(Color color) {
-        super(color);
+    public Caballo(Color color, Posicion posicion) {
+        super(color, posicion);
     }
 
     @Override
-    public boolean movimientoValido(int filaInicial, int columnaInicial, int filaFinal, int columnaFinal, Tablero tablero) {
-        int fila = Math.abs(filaFinal - filaInicial);
-        int columna = Math.abs(columnaFinal - columnaInicial);
+    public boolean movimientoValido(Posicion nuevaPosicion, Tablero tablero) {
+        int dx = Math.abs(nuevaPosicion.columna() - this.getPosicion().columna());
+        int dy = Math.abs(nuevaPosicion.fila() - this.getPosicion().fila());
 
-        return (fila == 2 && columna == 1) || (fila == 1 && columna == 2);
+        return (dx == 2 && dy == 1 || dx == 1 && dy == 2) &&
+                (!tablero.hayPiezaAliada(nuevaPosicion, this.getColor()));
     }
 
     @Override
     public String toString() {
-        return color == Color.BLANCO ? "♘" : "♞";
+        return getColor() == Color.BLANCO ? "♘" : "♞";
     }
 }

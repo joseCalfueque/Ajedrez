@@ -1,22 +1,21 @@
 package ajedrez.modelo;
 
 public class Rey extends Pieza {
-
-    public Rey(Color color) {
-        super(color);
+    public Rey(Color color, Posicion posicion) {
+        super(color, posicion);
     }
 
     @Override
-    public boolean movimientoValido(int filaInicial, int columnaInicial, int filaFinal, int columnaFinal, Tablero tablero) {
-        int fila = Math.abs(filaFinal - filaInicial);
-        int columna = Math.abs(columnaFinal - columnaInicial);
+    public boolean movimientoValido(Posicion nuevaPosicion, Tablero tablero) {
+        int dx = Math.abs(nuevaPosicion.columna() - this.getPosicion().columna());
+        int dy = Math.abs(nuevaPosicion.fila() - this.getPosicion().fila());
 
-        // Movimiento de una casilla en cualquier dirección
-        return (fila <= 1 && columna <= 1);
+        return (dx <= 1 && dy <= 1) &&
+                (!tablero.hayPiezaAliada(nuevaPosicion, this.getColor()));
     }
 
     @Override
     public String toString() {
-        return color == Color.BLANCO ? "♔" : "♚";
+        return getColor() == Color.BLANCO ? "♔" : "♚";
     }
 }

@@ -1,8 +1,6 @@
 package ajedrez.modelo;
-import java.awt.*;
 
 public class Peon extends Pieza {
-
     public Peon(Color color, Posicion posicion) {
         super(color, posicion);
     }
@@ -15,27 +13,20 @@ public class Peon extends Pieza {
         int nuevaFila = nuevaPosicion.fila();
         int nuevaColumna = nuevaPosicion.columna();
 
-        // para mover hacia adelante
         if (columnaActual == nuevaColumna && nuevaFila == filaActual + direccion &&
-                tablero.estaVacio(nuevaPosicion)) {
-            return true;
-        }
+                tablero.estaVacio(nuevaPosicion)) return true;
 
-        // Primer movimiento "doble"
         if (columnaActual == nuevaColumna &&
+                ((this.getColor() == Color.BLANCO && filaActual == 6) ||
+                        (this.getColor() == Color.NEGRO && filaActual == 1)) &&
                 nuevaFila == filaActual + 2 * direccion &&
-                ((this.getColor() == Color.BLANCO && filaActual == 6) || (this.getColor() == Color.NEGRO && filaActual == 1)) &&
                 tablero.estaVacio(nuevaPosicion) &&
-                tablero.estaVacio(new Posicion(filaActual + direccion, columnaActual))) {
+                tablero.estaVacio(new Posicion(filaActual + direccion, columnaActual)))
             return true;
-        }
 
-        // Captura en diagonal
-        if (Math.abs(nuevaColumna - columnaActual) == 1 &&
-                nuevaFila == filaActual + direccion &&
-                tablero.hayPiezaOponente(nuevaPosicion, this.getColor())) {
+        if (Math.abs(nuevaColumna - columnaActual) == 1 && nuevaFila == filaActual + direccion &&
+                tablero.hayPiezaOponente(nuevaPosicion, this.getColor()))
             return true;
-        }
 
         return false;
     }
@@ -43,10 +34,5 @@ public class Peon extends Pieza {
     @Override
     public String toString() {
         return this.getColor() == Color.BLANCO ? "♙" : "♟";
-    }
-
-    @Override
-    public boolean esMovimientoValido(int filaDestino, int columnaDestino, Pieza[][] tablero) {
-        return false;
     }
 }
